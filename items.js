@@ -107,7 +107,6 @@ function ItemDAO(database) {
                 docs.forEach((doc) => {
                     pageItems.push(doc);
                 });
-                // console.log(pageItems);
                 callback(pageItems);
             });
         } else {
@@ -115,7 +114,6 @@ function ItemDAO(database) {
                 docs.forEach((doc) => {
                     pageItems.push(doc);
                 });
-                // console.log(pageItems);
                 callback(pageItems);
             });
         }
@@ -190,25 +188,26 @@ function ItemDAO(database) {
          *
          */
 
-        var item = this.createDummyItem();
         var items = [];
-        for (var i=0; i<5; i++) {
-            items.push(item);
-        }
-
+        let num = page * 5;
+        let term = new RegExp('.*' + query + '.*','i');
+       
+        item.find({$or: [{title: new RegExp(term)},{slogan: term},{description: term}]}).sort({"_id": 1}).skip(num).limit(itemsPerPage).toArray((error,docs) => {
+            docs.forEach((doc) => {
+                items.push(doc);
+            });
+            callback(items);
+        });
         // TODO-lab2A Replace all code above (in this method).
 
         // TODO Include the following line in the appropriate
         // place within your code to pass the items for the selected page
         // of search results to the callback.
-        callback(items);
     }
 
 
     this.getNumSearchItems = function(query, callback) {
         "use strict";
-
-        var numItems = 0;
 
         /*
         * TODO-lab2B
@@ -223,7 +222,12 @@ function ItemDAO(database) {
         * simply do this in the mongo shell.
         */
 
-        callback(numItems);
+         let term = new RegExp('.*' + query + '.*','i');
+       
+        item.find({$or: [{title: new RegExp(term)},{slogan: term},{description: term}]}).toArray((error,docs) => {
+            let numItems = docs.length;
+            callback(numItems);
+        });
     }
 
 
@@ -240,14 +244,18 @@ function ItemDAO(database) {
          *
          */
 
-        var item = this.createDummyItem();
 
         // TODO-lab3 Replace all code above (in this method).
 
         // TODO Include the following line in the appropriate
         // place within your code to pass the matching item
         // to the callback.
-        callback(item);
+        // itemId = parseInt(itemId);
+        // console.log(itemId);
+        item.find({_id: itemId}).toArray((error,doc) => {
+            let item = doc[0];
+            callback(item);
+        });
     }
 
 

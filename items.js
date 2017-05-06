@@ -286,7 +286,7 @@ function ItemDAO(database) {
          *
          */
 
-        var reviewDoc = {
+        let reviewDoc = {
             name: name,
             comment: comment,
             stars: stars,
@@ -295,13 +295,15 @@ function ItemDAO(database) {
 
         // TODO replace the following two lines with your code that will
         // update the document with a new review.
-        var doc = this.createDummyItem();
-        doc.reviews = [reviewDoc];
+        item.update( { _id: itemId }, { $push: { reviews: reviewDoc } },(error,newDoc) => {
+            item.find({_id: itemId}).toArray((error,doc) => {
+                callback(doc[0]);
+            });
+        });
 
         // TODO Include the following line in the appropriate
         // place within your code to pass the updated doc to the
         // callback.
-        callback(doc);
     }
 
 

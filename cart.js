@@ -23,7 +23,7 @@ function CartDAO(database) {
     "use strict";
 
     this.db = database;
-
+    let cart = this.db.collection('cart');
 
     this.getCart = function(userId, callback) {
         "use strict";
@@ -37,20 +37,21 @@ function CartDAO(database) {
         * callback function.
         *
         */
-
-        var userCart = {
-            userId: userId,
-            items: []
-        }
-        var dummyItem = this.createDummyItem();
-        userCart.items.push(dummyItem);
+        // console.log(typeof userId);
+        cart.find({userId: userId}).toArray((error,docs) => {
+            // docs[0].items.forEach((doc) => {
+            //     userCart.push(doc);
+            // });
+            let userCart = docs[0];
+            callback(userCart);
+            // console.log(docs);
+        });
 
         // TODO-lab5 Replace all code above (in this method).
 
         // TODO Include the following line in the appropriate
         // place within your code to pass the userCart to the
         // callback.
-        callback(userCart);
     }
 
 

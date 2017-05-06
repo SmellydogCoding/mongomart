@@ -98,26 +98,39 @@ function ItemDAO(database) {
          * than you do for other categories.
          *
          */
-
-        var pageItem = this.createDummyItem();
-        var pageItems = [];
-        for (var i=0; i<5; i++) {
-            pageItems.push(pageItem);
+        
+        let pageItems = [];
+        let num = page * 5;
+        
+        if (category === "All") {
+            item.find({}).sort({"_id": 1}).skip(num).limit(itemsPerPage).toArray((error,docs) => {
+                docs.forEach((doc) => {
+                    pageItems.push(doc);
+                });
+                // console.log(pageItems);
+                callback(pageItems);
+            });
+        } else {
+            item.find({category: category}).sort({"_id": 1}).skip(num).limit(itemsPerPage).toArray((error,docs) => {
+                docs.forEach((doc) => {
+                    pageItems.push(doc);
+                });
+                // console.log(pageItems);
+                callback(pageItems);
+            });
         }
-
+        
         // TODO-lab1B Replace all code above (in this method).
 
         // TODO Include the following line in the appropriate
         // place within your code to pass the items for the selected page
         // to the callback.
-        callback(pageItems);
+        
     }
 
 
     this.getNumItems = function(category, callback) {
         "use strict";
-
-        var numItems = 0;
 
         /*
          * TODO-lab1C:
@@ -136,7 +149,17 @@ function ItemDAO(database) {
 
          // TODO Include the following line in the appropriate
          // place within your code to pass the count to the callback.
-        callback(numItems);
+        if (category === "All") {
+            let count = item.find({}).toArray((error,result) => {
+                let numItems = result.length;
+                callback(numItems);
+            });
+        } else {
+            item.find({category: category}).toArray((error,result) => {
+                let numItems = result.length;
+                callback(numItems);
+            });
+        }
     }
 
 
